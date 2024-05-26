@@ -30,8 +30,10 @@ exec ./launch_openpilot.sh
   sudo reboot #重启你的c3/c3x  
   
 #### 3. 下载文件  
-(1) 浏览器中打开 http://laolang.duckdns.org:7898/op/DongleId  
+(1) 浏览器中打开 http://laolang.duckdns.org:7898/op/DongleId/  
   DongleId替换成你的ID。 DongleId可以在你的c3/c3x设备上查看。
+(2) 浏览器中打开 http://laolang.duckdns.org:7898/nav/DongleId/  
+  DongleId替换成你的ID。 设置导航地址。(仅支持IPhone地图和高德地图)
 
 # openpilot-server for english
 
@@ -40,7 +42,7 @@ exec ./launch_openpilot.sh
 <ws_bind> IP and port of the websocket server.  
 <http_bind> IP and port of the http server.  
 <athena_host> The domain name of the server.  
-<upload_url> The the domain name of the server.  
+<upload_url> The domain name of the server.  
 (2) Launch  
 Launch opserver.exe on your windows server.  
   
@@ -65,5 +67,8 @@ exec ./launch_openpilot.sh
 sudo reboot #Restart your c3/c3x  
   
 #### 3. Download the file  
-(1) Open http://laolang.duckdns.org:7898/op/DongleId in your browser  
+(1) Open http://laolang.duckdns.org:7898/op/DongleId/ in your browser  
 and replace DongleId with your ID. DongleId can be viewed on your c3/c3x device.  
+
+(2) Open http://laolang.duckdns.org:7898/nav/DongleId/ in your browser  
+  Configure navigation。(Only suppost IPhone map and AMap)
