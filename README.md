@@ -20,6 +20,7 @@
   
 export ATHENA_HOST='ws://laolang.duckdns.org:7899'  
 export API_HOST='http://laolang.duckdns.org:7898'  
+export MAPBOX_TOKEN='<自己注册。也可以找我，10元1个。>'  
   
 cd /data/openpilot  
 exec ./launch_openpilot.sh  
@@ -29,11 +30,13 @@ exec ./launch_openpilot.sh
 (3) rm -rf /data/params/d/DongleId  
   sudo reboot #重启你的c3/c3x  
   
-#### 3. 下载文件  
+#### 3. 下载文件和设置导航  
 (1) 浏览器中打开 http://laolang.duckdns.org:7898/op/DongleId/  
   DongleId替换成你的ID。 DongleId可以在你的c3/c3x设备上查看。
 (2) 浏览器中打开 http://laolang.duckdns.org:7898/nav/DongleId/  
   DongleId替换成你的ID。 设置导航地址。(仅支持IPhone地图和高德地图)
+
+#### 4.Star me. Thank you
 
 # openpilot-server for english
 
@@ -57,6 +60,7 @@ like this:
   
 export ATHENA_HOST='ws://laolang.duckdns.org:7899'  
 export API_HOST='http://laolang.duckdns.org:7898'  
+export MAPBOX_TOKEN='<自己注册.也可以找我，10元1个.>'  
   
 cd /data/openpilot  
 exec ./launch_openpilot.sh  
@@ -66,9 +70,11 @@ exec ./launch_openpilot.sh
 (3) rm -rf /data/params/d/DongleId  
 sudo reboot #Restart your c3/c3x  
   
-#### 3. Download the file  
+#### 3. Download and navigation  
 (1) Open http://laolang.duckdns.org:7898/op/DongleId/ in your browser  
 and replace DongleId with your ID. DongleId can be viewed on your c3/c3x device.  
 
 (2) Open http://laolang.duckdns.org:7898/nav/DongleId/ in your browser  
-  Configure navigation。(Only suppost IPhone map and AMap)
+  Configure navigation.(Only support IPhone map and AMap)
+
+#### 4.Star me. Thank you
