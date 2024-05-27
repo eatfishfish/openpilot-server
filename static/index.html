@@ -1,0 +1,181 @@
+<!Doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="format-detection" content="telephone=no">
+	<title>openpilot</title>
+	<script type="text/javascript">
+	  window.onload = function() {
+		input_text = localStorage.getItem("dongleId");
+		document.forms["formDongleId"]["input_text"].value = input_text;
+
+		strSec = localStorage.getItem("operationTime")
+		now = Math.floor(Date.now() / 1000)
+		if (now - Number(strSec) < 180)
+		{
+			document.forms["formDongleId"].style.display="none";
+			document.getElementById('btnlist').style.display="";
+		}
+	}
+	  </script>
+
+
+	<link rel="stylesheet" href="css/form.min.css"/>
+	<style>	
+		.button {
+			background-color: #4CAF50; /* Green */
+			border: none;
+			color: white;
+			padding: 25px 40px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
+			-webkit-transition-duration: 0.4s; /* Safari */
+			transition-duration: 0.4s;
+		}
+
+	.button1 {
+		box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+	}
+
+	.button2:hover {
+		box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+	}
+
+	</style>
+</head>
+<body>
+<div id="subjects">
+	<div class="form_ctrl page_head" id="1" title="openpilot">
+		<h2>openpilot online</h2>
+	</div>
+	
+	<form name="formDongleId"  action="/nav/" onsubmit="return login()" method="post">
+		<div class="form_ctrl page_text" id="2" title="">
+			<p>openpilot is an open source advanced driver assistance system that works on 250+ car models of Toyota, Hyundai, Honda, and many other brands.</p>
+		</div>
+
+		<div name="div_input_text" class="form_ctrl input_text" id="dongleid" title="dongleid">
+			<label class="ctrl_title">Dongle ID</label>
+			<input type="text" id="dongleid_value" name="input_text" value="" placeholder="Please input dongle ID.Check your c3 device.">
+		</div>
+
+		<div class="form_ctrl form_submit" id="12" title="Login private openpilot server.">
+			<label class="ctrl_title">Login private openpilot server.</label>
+			<input type="submit" value="Submit"  />
+		</div>
+	</form>
+	
+	<div id="logo">
+		<div style="margin-bottom: 5px;"></div>
+	</div>
+
+	<script type="text/javascript">
+	function login() {
+		var input_text = document.forms["formDongleId"]["input_text"].value;
+		uri = '/check/'+input_text
+		
+		const xhr = new XMLHttpRequest();
+		xhr.open('GET', uri, true);
+		xhr.onload = function() {
+		console.log(this.status);
+		if (this.status === 200) {
+			console.log(this.responseText);
+			if (this.responseText==="true")
+			{
+				localStorage.setItem("dongleId", input_text);
+				document.forms["formDongleId"].style.display="none";
+				document.getElementById('btnlist').style.display="";
+			}else {
+				alert("Dongle Id error.");
+			}
+		}
+		};
+		xhr.send();
+
+		return false;
+	}
+
+	function showNavigation() {
+		dongleId = localStorage.getItem("dongleId");
+		document.getElementById('nav_home').style.display="";
+		document.getElementById('nav_home').action = "/nav/"+ dongleId + "/"
+		document.getElementById('nav_work').style.display="";
+		document.getElementById('nav_work').action = "/nav/"+ dongleId + "/"
+		document.getElementById('set_destination').style.display="";
+		document.getElementById('set_destination').action = "/nav/"+ dongleId + "/"
+		//document.getElementById('btnlist').style.display="none";
+		recordOperationTime()
+	}
+
+	function showlog() {
+		dongleId = localStorage.getItem("dongleId");
+		document.getElementById('nav_home').style.display="none";
+		document.getElementById('nav_work').style.display="none";
+		document.getElementById('set_destination').style.display="none";
+
+		url = "/op/"+ dongleId + "/"
+		window.location = url;
+		//document.getElementById('btnlist').style.display="none";
+		recordOperationTime()
+	}
+
+	function recordOperationTime(){
+		strSec = Math.floor(Date.now() / 1000)
+		localStorage.setItem("operationTime", strSec)
+	}
+
+</script>
+
+<form id="nav_home" action="/nav/" method="post" style="display: none;">
+	<div class="form_ctrl input_text">
+		<label class="ctrl_title">Home Address</label>
+	 	<input type="text" name="nav_home"  placeholder="Please input home address."/>
+	</div>
+	<br/>
+	<div class="form_ctrl form_submit" id="12" title="Input your home address.">
+		<input type="submit" value="submit"  />
+	</div>
+  </form>
+
+  <form id="nav_work" action="/nav/" method="post" style="display: none;">
+	<div class="form_ctrl input_text">
+		<label class="ctrl_title">Work Address</label>
+  		<input type="text" name="nav_work" placeholder="Please input work address." />
+  </div>
+  <br/>
+  <div class="form_ctrl form_submit" title="Input your work address.">
+	<input type="submit" value="submit"  />
+  </div>
+  </form>
+
+  <form id="set_destination" action="/nav/" method="post" style="display: none;">
+	<div class="form_ctrl input_text">
+		<label class="ctrl_title">Set Destination</label>
+  		<input type="text" name="set_destination" placeholder="Please input destination."/>
+  </div>
+  <br/>
+  <div class="form_ctrl form_submit">
+	<input type="submit" value="submit" />
+  </div>
+</form>
+
+
+<div id="btnlist" style="display: none;text-align:center" title="" >
+</br></br></br></br>
+	<input type="button" value="Log" class="button button1" onclick = "showlog();" />
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="button" value="Nav" class="button button1" onclick = "showNavigation();" />
+</div>
+</br></br></br></br>
+
+
+</body>
+</html>
+
