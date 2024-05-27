@@ -14,13 +14,14 @@
 (2) 在/data/continue.sh export 添加 <athena_host> 和 <upload_url>。  
   export ATHENA_HOST='ws://laolang.duckdns.org:7899'  
   export API_HOST='http://laolang.duckdns.org:7898'  
+  export MAPBOX_TOKEN='<自己注册>'  
   像这样：  
 /-----/data/continue.sh file-----------------  
 #!/usr/bin/bash  
   
 export ATHENA_HOST='ws://laolang.duckdns.org:7899'  
 export API_HOST='http://laolang.duckdns.org:7898'  
-export MAPBOX_TOKEN='<自己注册。也可以找我，10元1个。>'  
+export MAPBOX_TOKEN='<自己注册>'  
   
 cd /data/openpilot  
 exec ./launch_openpilot.sh  
@@ -31,10 +32,9 @@ exec ./launch_openpilot.sh
   sudo reboot #重启你的c3/c3x  
   
 #### 3. 下载文件和设置导航  
-(1) 浏览器中打开 http://laolang.duckdns.org:7898/op/DongleId/  
-  DongleId替换成你的ID。 DongleId可以在你的c3/c3x设备上查看。
-(2) 浏览器中打开 http://laolang.duckdns.org:7898/nav/DongleId/  
-  DongleId替换成你的ID。 设置导航地址。(仅支持IPhone地图和高德地图)
+(1) 浏览器中打开 http://<your_domain_name> 例如 [http://laolang.duckdns.org:7898](http://laolang.duckdns.org:7898/static/index.html)  
+
+(2) 进入设置导航地址。(仅支持IPhone地图和高德地图)  
 
 #### 4.Star me. Thank you
 
@@ -54,13 +54,14 @@ Launch opserver.exe on your windows server.
 (2) In "/data/continue.sh" file, export <athena_host> and <upload_url>.  
 export ATHENA_HOST='ws://laolang.duckdns.org:7899'  
 export API_HOST=' http://laolang.duckdns.org:7898 '  
+export MAPBOX_TOKEN='<register_on_mapbox_website.>'  
 like this:  
 /-----/data/continue.sh file-----------------  
 #!/usr/bin/bash  
   
 export ATHENA_HOST='ws://laolang.duckdns.org:7899'  
 export API_HOST='http://laolang.duckdns.org:7898'  
-export MAPBOX_TOKEN='<自己注册.也可以找我，10元1个.>'  
+export MAPBOX_TOKEN='<register_on_mapbox_website.>'  
   
 cd /data/openpilot  
 exec ./launch_openpilot.sh  
@@ -71,10 +72,8 @@ exec ./launch_openpilot.sh
 sudo reboot #Restart your c3/c3x  
   
 #### 3. Download and navigation  
-(1) Open http://laolang.duckdns.org:7898/op/DongleId/ in your browser  
-and replace DongleId with your ID. DongleId can be viewed on your c3/c3x device.  
+(1) Open http://<your_domain_name> (for example [http://laolang.duckdns.org:7898](http://laolang.duckdns.org:7898/static/index.html)) in your browser  
 
-(2) Open http://laolang.duckdns.org:7898/nav/DongleId/ in your browser  
-  Configure navigation.(Only support IPhone map and AMap)
+(2) In the web page configure the navigation.(Only support IPhone map and AMap)  
 
 #### 4.Star me. Thank you
