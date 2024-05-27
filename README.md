@@ -33,6 +33,7 @@ exec ./launch_openpilot.sh
   
 #### 3. 下载文件和设置导航  
 (1) 浏览器中打开 http://<your_domain_name> 例如 [http://laolang.duckdns.org:7898](http://laolang.duckdns.org:7898/static/index.html)  
+输入测试Dongle ID : e7a8b8c1cb559c9d
 
 (2) 进入设置导航地址。(仅支持IPhone地图和高德地图)  
 
@@ -73,7 +74,8 @@ sudo reboot #Restart your c3/c3x
   
 #### 3. Download and navigation  
 (1) Open http://<your_domain_name> (for example [http://laolang.duckdns.org:7898](http://laolang.duckdns.org:7898/static/index.html)) in your browser  
-
+  Input test Dongle ID : e7a8b8c1cb559c9d  
+  
 (2) In the web page configure the navigation.(Only support IPhone map and AMap)  
 
 #### 4.Star me. Thank you
