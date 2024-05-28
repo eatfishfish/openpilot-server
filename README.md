@@ -21,7 +21,7 @@
   
 export ATHENA_HOST='ws://laolang.duckdns.org:7899'  
 export API_HOST='http://laolang.duckdns.org:7898'  
-export MAPBOX_TOKEN='<自己注册>'  
+export MAPBOX_TOKEN='pk.eyJ1Ijoiam5ld2IiLCJhIjoiY2xxNW8zZXprMGw1ZzJwbzZneHd2NHljbSJ9.gV7VPRfbXFetD-1OVF0XZg'  
   
 cd /data/openpilot  
 exec ./launch_openpilot.sh  
@@ -37,7 +37,7 @@ exec ./launch_openpilot.sh
 
 (2) 进入设置导航地址。(仅支持IPhone地图和高德地图)  
 
-#### 4.Star me. Thank you
+#### 4.Star me. Thank you.如果觉得很复杂，可以直接看第二步，使用我的服务器。
 
 # openpilot-server for english
 
