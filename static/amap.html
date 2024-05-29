@@ -1,0 +1,430 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>eatfishfish/opserver</title>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <script type="text/javascript" src='https://cdn.sheetjs.com/xlsx-0.19.2/package/dist/xlsx.full.min.js'></script>
+</head>
+<style type="text/css">
+    html,body{
+        font-size: 12px;
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+    }
+    .map{
+        height: 100%;
+        width: 100%;
+        float: left;
+    }
+    
+    /*数据卡片*/
+    .input-card{
+        padding: 5px;
+        max-height: 360px;
+        width: 360px;
+        overflow-y: scroll;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border-radius: .25rem;
+        border-width: 0;
+        border-radius: 0.4rem;
+        box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+        position: fixed;
+       /*bottom: 1rem;*/
+        right: 1.25rem;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    /*图标*/
+    .pot-out {
+        background-color:#F0FFF0;
+        width:18px;height:18px;
+        border:solid 1px #00BFFF;
+        border-radius:16px 16px 16px 0;
+        -webkit-transform:rotate(-45deg);
+        -moz-transform: ratate(-45deg);
+        transform:rotate(-45deg);
+    }
+    .pot-in {
+        line-height: 18px;
+        text-align: center;
+        width:18px;height:18px;
+        -webkit-transform:rotate(45deg);
+        -moz-transform: ratate(45deg);
+        transform:rotate(45deg);
+    }
+    
+    /*表格*/
+    table {
+        text-align: center;
+        width:350px;
+       /* table-layout:fixed;*//* 只有定义了表格的布局算法为fixed，下面td的定义才能起作用。 */  
+        border-color:  white;
+        border-collapse: collapse;
+    }
+    table thead tr {
+        background-color: #C0EEF2;
+    }
+    table tr {
+        background-color: #E9F8F9;
+    }
+
+    table td{  
+        /*width:20px;*/
+        word-break:keep-all;/* 不换行 */  
+        white-space:nowrap;/* 不换行 */  
+        overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */  
+        text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用*/  
+    }
+    .btn2{
+        border: none;
+        background-color: #E3F6FF;
+    }
+    .btns-box{
+        display: flex;
+        display: -webkit-flex;
+        justify-content: space-between;
+        width: 330px;
+    }
+    .btns{
+        border: none;
+        flex-basis:  auto;
+        flex-grow: 1;
+        border: solid 1px white;
+        background-color: #E3E6FA;
+    }
+
+</style>
+<body>
+<div id="container" class="map"></div>
+
+<div class="input-card">
+    <div class="btns-box">
+        <button id="hide-obj3d-btn" onclick="setRoadNetLayer()" class="btns">街景</button>
+        <button id="show-obj3d-btn" onclick="setSatelliteLayer()" class="btns">卫星</button>
+        <button id="show-obj3d-btn" onclick="setMixLayer()"   class="btns">混合</button>
+        <button  class="btns" style="display: none;" onclick="noDomExportExcel() ">导出Excel</button>
+    </div>
+    
+    <table border="1" style="display: none;">
+      <input id="tipinput"/>&nbsp;
+      <button name="search" onclick="onSearch()">Search</button>&nbsp;&nbsp;
+    </table>
+    <table border="1" >
+        <thead>
+            <th >Id</th>
+            <th style="display: none;">经度</th>
+            <th style="display: none;">纬度</th>
+            <th>地址</th>
+            <th style="display: none;">删除</th>
+            <th>发送OP</th>
+            <th style="display: none;">定位</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://webapi.amap.com/maps?v=1.4.15&key=b8de4cd1c32ebd939282e7fb176429b3&plugin=AMap.Autocomplete"></script>
+<script type="text/javascript">
+
+    var num = 0;
+    // 数组
+    let data = [];
+
+    dongleid = "0e6a9a3cdf6a1092";
+
+    function onSearch()
+    {
+        num=0;
+        data = [];
+
+        input_text = document.getElementById("tipinput").value
+        if (input_text == ""){
+            return
+        }
+        dongleid = localStorage.getItem("dongleId");
+        console.log(dongleid);
+
+        uri = '/amap/' + dongleid + "/"+input_text
+		
+		const xhr = new XMLHttpRequest();
+		xhr.open('GET', uri, true);
+		xhr.onload = function() {
+		
+		if (this.status === 200) {
+			//console.log(this.responseText);
+            let arr = this.responseText.split(';');
+
+            for (i=0; i < arr.length-1; i++) {
+                console.log(arr[i]);
+                let ll = arr[i].split(',');
+                    data.push({
+                    id:num,
+                        lng:Number(ll[0]),
+                        lat:Number(ll[1]),
+                        remark:ll[2]
+                    });
+                    num++;
+            }
+            
+            initdata();
+
+            if (num > 0){
+                map.setCenter([data[0].lng, data[0].lat]); //设置地图中心点
+                map.setZoom(17); //设置缩放等级
+            }
+		}
+
+        numSearch = num;
+		};
+		xhr.send();
+    }
+
+    let inputElement = document.getElementById("tipinput");
+
+    // 监听输入框的 keydown 事件
+    inputElement.addEventListener("keydown", function(event) {
+    if (event.keyCode === 13) {
+        onSearch()
+    }
+    });
+
+    //发送到op
+    function sends(e){
+        var i=e.target.getAttribute("index");
+        map.setCenter([data[i].lng, data[i].lat]); //设置地图中心点
+        var httpRequest = new XMLHttpRequest();//第一步：创建需要的对象
+        uri = "/v1/navigation/"+dongleid+"/"+"set_destination"
+        httpRequest.open('POST', uri, true); //第二步：打开连接/***发送json格式文件必须设置请求头 ；如下 - */
+        httpRequest.setRequestHeader("Content-type","application/json");//设置请求头 注：post方式必须设置请求头（在建立连接后设置请求头）var obj = { name: 'zhansgan', age: 18 };
+        httpRequest.setRequestHeader("Authorization","jwt-from-amap-web");
+
+        var placeName = data[i].remark;
+        var placeDetail = data[i].remark;
+        if (placeName == ""){
+            placeName = document.getElementById("tipinput").value;
+        }
+        var obj = { place_name: placeName, place_details:placeDetail,longitude:data[i].lng, latitude:data[i].lat};
+        httpRequest.send(JSON.stringify(obj));//发送请求 将json写入send中
+        /**
+         * 获取数据后的处理程序
+         */
+        httpRequest.onreadystatechange = function () {//请求后的回调接口，可将请求成功后要执行的程序写在其中
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {//验证请求是否发送成功
+                var json = httpRequest.responseText;//获取到服务端返回的数据
+                console.log(json);
+                if (json == "ok")
+                {
+                    alert("发送成功")
+                }
+            }
+        }
+    }
+
+    var save=false;
+    
+
+    //标记
+    var markers = [];
+    //高德地图
+    var map = new AMap.Map("container", { 
+        resizeEnable: true,
+        expandZoomRange:true,
+        zoom:20, //设置初始化级别
+        zooms:[3,20] //设置缩放级别范围 3-20 级 
+    });
+    
+    // 构造官方卫星、路网图层
+    var satelliteLayer = new AMap.TileLayer.Satellite();
+    var roadNetLayer =  new AMap.TileLayer.RoadNet();
+    
+    //设置鼠标样式
+    //  map.setDefaultCursor("crosshair");
+    
+    //为地图注册click事件获取鼠标点击出的经纬度坐标    
+    map.on('click', function(e) {
+        var find = false;
+        for (i=0; i < data.length; i++) {
+            if (data[i].remark == "")
+            {
+                data[i].lng = e.lnglat.R;
+                data[i].lat = e.lnglat.Q;
+                data[i].remark = "";
+                find = true;
+            }
+        }
+
+        if (!find) {
+            data.push({
+            id:num,
+            lng:e.lnglat.R,
+            lat:e.lnglat.Q,
+            remark:""
+            });
+            num++;
+        }
+
+        initdata();
+        //num++;
+    });
+    
+    
+    //初始化数据
+    function initdata(){
+        //1、清除所有图标
+        markers=[];
+        map.clearMap();
+        //2、渲染图标
+        for(let i=0;i<data.length;i++){
+            //console.log(typeof data[i].lng);
+            //添加图标
+            var marker = new AMap.Marker({
+                // 将 html 传给 content
+                content: '<div class="pot-out"><div class="pot-in">'+data[i].id+'</div></div>',
+                position:[data[i].lng,data[i].lat],
+                offset:new AMap.Pixel(-9,-18),    //中心点
+                draggable: true,    // 设置是否可以拖拽
+                cursor: 'move',     //拖动时的鼠标样式
+                raiseOnDrag: true,  //托拽效果
+                extData:i           //自定义数据
+            });
+            //鼠标移动
+            marker.on('mouseup',function (e3) {
+                var index=e3.target.De.extData;
+                data[index].lng=e3.lnglat.R;
+                data[index].lat=e3.lnglat.Q;
+                initdata();
+            });
+            markers.push(marker);    //保存到标识列表中
+        }
+        map.add(markers);     //添加标识到地图中
+
+        
+        /*
+        * 渲染表格
+        */
+        let tbodyinner = document.getElementsByTagName("tbody")[0]
+        let html = ''
+        for(let i=0;i<data.length;i++){
+            html+=`
+            <tr>
+                <td >${data[i].id}</td>
+                <td style="display: none;" name="latlng" title='${data[i].lng}'>${data[i].lng}</td>
+                <td style="display: none;" name="latlng" title='${data[i].lng}'>${data[i].lat}</td>
+                
+                <td> <button name="locate" class="btn2" index="${i}">${data[i].remark}</button> </td>
+                <td style="display: none;"> <button name="del" class="btn2" index="${i}">删除</button> </td>
+                <td> <button name="send" class="btn2" index="${i}">op导航</button> </td>
+            </tr>
+            `
+        } 
+        // tbody.innerHTML="..."往tbody中添加内容
+        tbodyinner.innerHTML = html
+        addEvents()
+        save=false;
+    }
+    
+    // 表格添加监听click事件
+    function addEvents(){
+        let subject = document.getElementsByName("grade")
+        for(let i=0;i<subject.length;i++){
+            subject[i].addEventListener('click',function(e){
+                edit(this,e)
+            });
+        }
+        let delbut = document.getElementsByName("del")
+        for(let i=0;i<delbut.length;i++){
+            delbut[i].addEventListener('click',function(e){
+                deletes(e)
+            });
+        }
+        let locate = document.getElementsByName("locate")
+        for(let i=0;i<delbut.length;i++){
+            locate[i].addEventListener('click',function(e){
+                locates(e)
+            });
+        }
+        let send = document.getElementsByName("send")
+        for(let i=0;i<delbut.length;i++){
+            send[i].addEventListener('click',function(e){
+                sends(e)
+            });
+        }
+    }
+
+    
+    //表格编辑
+    function edit(i,e){
+        let oldvalue = i.innerHTML;
+        // 设置该标签为空
+        i.innerHTML = ''
+        // 添加input对象
+        let inp = document.createElement("input")
+        inp.value = oldvalue
+        inp.classList.add("inputClass")
+        // 添加子节点
+        i.appendChild(inp)
+        // 获取文本中的内容
+        inp.select()
+        // 失去焦点事件
+        inp.onblur = function(){
+            i.innerHTML = inp.value;
+            var index=e.target.getAttribute("index");
+            data[index].remark=inp.value;
+        }
+    }
+    
+    //删除表格行数据
+    function deletes(e){
+        //var r=confirm("确定删除？");
+        var r=true
+        if (r==true){
+            var index=e.target.getAttribute("index");
+            //表格数据移除
+            data.splice(index, 1);
+            //地图上移除标记
+            map.remove([markers[index]]);
+            //列表中移除标记
+            markers.splice(index, 1);
+            initdata();
+        }
+        else{
+            console.log("取消");
+        }
+    }
+    
+    //删除表格行数据
+    function locates(e){
+        var i=e.target.getAttribute("index");
+        map.setCenter([data[i].lng, data[i].lat]); //设置地图中心点
+        map.setZoom(18); //设置缩放等级
+    }
+    
+    //街道图层
+    function setRoadNetLayer() {
+        map.remove(satelliteLayer);
+        map.add(roadNetLayer);
+    }
+    //卫星图层
+    function setSatelliteLayer() {
+        map.remove(roadNetLayer);
+        map.add(satelliteLayer);
+    }
+    //混合图层
+    function setMixLayer() {
+        map.add(roadNetLayer);
+        map.add(satelliteLayer);
+    }
+    
+</script>
+</body>
+</html>

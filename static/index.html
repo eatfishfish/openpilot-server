@@ -126,6 +126,11 @@
 		recordOperationTime()
 	}
 
+	function showAmap(){
+		url = "/static/amap.html"
+		window.location = url;
+	}
+
 	function recordOperationTime(){
 		strSec = Math.floor(Date.now() / 1000)
 		localStorage.setItem("operationTime", strSec)
@@ -170,9 +175,12 @@
 <div id="btnlist" style="display: none;text-align:center" title="" >
 </br></br></br></br>
 	<input type="button" value="Log" class="button button1" onclick = "showlog();" />
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	&nbsp;&nbsp;
+	<input type="button" value="AMap" class="button button1" onclick = "showAmap();" />
+	&nbsp;&nbsp;
 	<input type="button" value="Nav" class="button button1" onclick = "showNavigation();" />
 </div>
+
 </br></br></br></br>
 
 

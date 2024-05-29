@@ -6,6 +6,7 @@
   <http_bind> 是绑定http server 的ip和端口。  
   <athena_host> 是该服务端公网的域名。  
   <upload_url> 是该服务端公网的域名。  
+  <amap_key> 高德API KEY 。https://console.amap.com/dev/index 这里注册。选择绑定“Web服务”
 (2) 启动  
 在服务器上启动opserver.exe。  
 
