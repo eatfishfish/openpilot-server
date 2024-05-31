@@ -3,3 +3,4 @@ http_bind=0.0.0.0:7898
 athena_host=ws://laolang.duckdns.org:7899
 upload_url=http://laolang.duckdns.org:7898
 amap_key=23428738744447ba93dda0d6473ff026e
+ffmpeg_path=D:\\software\\ffmpeg.exe

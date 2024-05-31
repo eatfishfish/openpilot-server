@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<!--Happy children's day 2024-05-30-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://vjs.zencdn.net/7.14.3/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.14.3/video.js"></script>
+    <style>
+		body {
+			margin: 0;
+			font-family: 'Arial', sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+			background-color: #f5f5f5;
+		}
+
+		.video-container {
+			margin-bottom: 20px;
+			border-radius: 8px;
+			overflow: hidden;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		.controls-container {
+			text-align: center;
+			margin-top: 20px;
+		}
+
+		.input-group {
+			display: flex;
+			max-width: 400px;
+			margin: 0 auto;
+			overflow: hidden;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		#m3u8Input {
+			flex: 1;
+			padding: 12px;
+			border: none;
+			border-radius: 5px 0 0 5px;
+			font-size: 16px;
+		}
+
+		button {
+			padding: 12px 20px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 0 5px 5px 0;
+			cursor: pointer;
+			font-size: 16px;
+			transition: background-color 0.3s;
+		}
+
+		button:hover {
+			background-color: #45a049;
+		}
+		
+	</style>
+
+    <title>openpilot-online</title>
+	
+	<script type="text/javascript">
+	function isWeChat(){
+		//window.navigator.userAgent属性包含了浏览器类型、版本、操作系统类型、浏览器引擎类型等信息，这个属性可以用来判断浏览器类型
+		var ua = window.navigator.userAgent.toLowerCase();
+		//通过正则表达式匹配ua中是否含有MicroMessenger字符串
+		if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+		return true;
+		}else{
+		return false;
+		}
+	  }
+
+	  window.onload = function() {
+		console.log(window.navigator.platform);
+	}
+	</script>
+</head>
+<body>
+    <div id="video-frame" class="video-container"></div>
+	<div>
+		<input type='button' style="width:100px; height:50px;" onclick='playVideo(lastUrl);' value='Play'>
+		<input type='button' style="width:100px; height:50px;" onclick='window.location="/static/index.html";' value='Return'>
+	</div>
+    <script>
+		init = false;
+		lastUrl = "";
+		var arr_url;
+
+		dongleid = localStorage.getItem("dongleId");
+		uri = "/vod/"+dongleid
+
+		getVodUrl();
+		var int=self.setInterval("clock()",10000);
+		function clock()
+		{
+			getVodUrl();
+		}
+
+		function getVodUrl() {
+			console.log("getVodUrl");
+			const xhr = new XMLHttpRequest();
+			xhr.open('GET', uri, true);
+			xhr.onload = function() {
+				if (this.status === 200) {
+					let arr = this.responseText.split(',');
+					console.log(arr)
+					if (arr.length == 0){
+						alert("No video.");
+						return;
+					}
+
+					arr_url = arr;
+
+					if (!init) {
+						vodUrl = findUrl();
+						if (vodUrl != "") {
+							content =  '<video onended="videoEnded()" id="m3u8Player" class="video-js vjs-default-skin" controls width="360" height="640">\
+							<source id="src_m3u8" src="'+vodUrl+ '" type="application/x-mpegURL">\
+							</video>'
+							console.log(content);
+							document.getElementById('video-frame').innerHTML = content;
+							init = true;
+						}
+					}
+					
+				}
+			};
+			xhr.send();
+		}
+
+		function findUrl() {
+			var arr = arr_url;
+			idx = 99;
+			for (i=0; i < arr.length; i++) {
+				if (lastUrl == arr[i]) {
+					idx = i;
+					console.log(arr[i]);
+					break;
+				}
+			}
+
+			if (idx != 0){
+				if (idx==99) {
+					idx = arr.length - 1;
+				} else {
+					idx = idx -1;
+				}
+
+				lastUrl = arr[idx];
+				return lastUrl;
+			}
+
+			return "";
+		}
+		
+		function videoEnded(){
+			console.log("The End.")
+
+			vodUrl = findUrl();
+			if (vodUrl == "") {
+				return
+			}
+
+			console.log(vodUrl);
+			
+			src = vodUrl;
+			newSource = {
+				src: vodUrl,
+				type: 'application/x-mpegURL'
+			};
+
+			const videoPlayer = videojs('m3u8Player');
+			videoPlayer.src(newSource);
+			videoPlayer.play();
+		  }
+
+		function playVideo(src) {
+			console.log(src);
+			input = document.getElementById('src_m3u8').src
+			document.getElementById('video-frame').style.display="";
+			const videoPlayer = videojs('m3u8Player');
+			
+			newSource = {
+				src: src,
+				type: 'application/x-mpegURL'
+			};
+		
+			videoPlayer.src(newSource);
+
+			videoPlayer.ready(function(){
+				videoPlayer.on('loadedmetadata', function(){
+				console.log("videoPlayer duration:",videoPlayer.duration());
+				videoPlayer.error(null);
+				})});
+
+			videoPlayer.play();
+
+			
+		}
+	</script>
+</body>
+</html>

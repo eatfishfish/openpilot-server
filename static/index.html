@@ -131,6 +131,11 @@
 		window.location = url;
 	}
 
+	function showVOD(){
+		url = "/static/vod.html"
+		window.location = url;
+	}
+
 	function recordOperationTime(){
 		strSec = Math.floor(Date.now() / 1000)
 		localStorage.setItem("operationTime", strSec)
@@ -172,8 +177,12 @@
 </form>
 
 
+
+
 <div id="btnlist" style="display: none;text-align:center" title="" >
-</br></br></br></br>
+	</br></br></br></br>
+	<input type="button" value="Vod" class="button button1" onclick = "showVOD();" />
+	</br></br>
 	<input type="button" value="Log" class="button button1" onclick = "showlog();" />
 	&nbsp;&nbsp;
 	<input type="button" value="AMap" class="button button1" onclick = "showAmap();" />
