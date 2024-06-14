@@ -63,7 +63,7 @@
                 //途经点
                 var wayMarker;
                 //初始化中心坐标
-                var centerGPS = _GPS_CENTER_;//['120.21473911773758', '30.263519892563018'];
+                var centerGPS = _GPS_CENTER_;
                 //途经点数组。方便清空数据
                 var wayMarkerArray = new Array();
                 var carStart, carEnd;
@@ -81,6 +81,10 @@
                 var gpsData = JSON.parse(allData)
                 var rowLength = gpsData.data.rows.length;
                 var gpsLength = gpsData.data.rows[rowLength - 1].gpsInfos.length;
+				for(var i=0;i<rowLength;i++){
+				  wayMarkerArray[i] = new Array();
+				}
+				
                 //添加小汽车
                 carStart = [gpsData.data.rows[0].gpsInfos[0].longitude, gpsData.data.rows[0].gpsInfos[0].latitude]
                 carEnd = [gpsData.data.rows[rowLength - 1].gpsInfos[gpsLength - 1].longitude, gpsData.data.rows[rowLength - 1].gpsInfos[gpsLength - 1].latitude]
@@ -187,10 +191,10 @@
                 // 实例化点标记
                 function addMarker(i) {
                     if (null != wayMarker) {
-                        wayMarkerArray.forEach(function (wayMarkerPoint) {
+                        wayMarkerArray[i].forEach(function (wayMarkerPoint) {
                             wayMarkerPoint.setMap(null);
                         })
-                        wayMarkerArray = new Array();
+                        wayMarkerArray[i] = new Array();
                     }
 
                     var data = gpsData.data.rows[i];
@@ -209,7 +213,7 @@
                                 direction: 'right' //设置文本标注方位
                             });
                         }
-                        wayMarkerArray.push(wayMarker);
+                        wayMarkerArray[i].push(wayMarker);
                     }
                 }
              
@@ -235,7 +239,7 @@
              
                 /**********动画 START**********/
                 function startAnimation() {
-                    marker.moveAlong(lineArr, 99200);
+                    marker.moveAlong(lineArr, 992);
                 }
              
                 function pauseAnimation() {
