@@ -39,6 +39,8 @@ exec ./launch_openpilot.sh
 
 (2) 进入设置导航地址。(仅支持IPhone地图和高德地图)  
 
+(3) 上传GPS可以寻车，查看行车轨迹。(需要op中上传GPS。[代码参考](https://github.com/eatfishfish/openpilot/blob/c3/selfdrive/navd/navd.py))  
+
 #### 4.Star me. Thank you.如果觉得很复杂，可以直接看第二步，使用我的服务器。
 
 # openpilot-server for english
