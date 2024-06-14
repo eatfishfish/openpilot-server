@@ -20,8 +20,10 @@
 			document.getElementById('btnlist').style.display="";
 		}
 	}
-	  </script>
-
+	</script>
+	<!--statistic-->
+	<script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
+	<script>LA.init({id:"3IjhGahfKXjHlq3b",ck:"3IjhGahfKXjHlq3b"})</script>
 
 	<link rel="stylesheet" href="css/form.min.css"/>
 	<style>	
@@ -136,6 +138,15 @@
 		window.location = url;
 	}
 
+	function showLocation() {
+		did = localStorage.getItem("dongleId");
+		url = "/replaygps/"+String(did)+"/"
+		var date = new Date();
+		url = url+date.getFullYear()+"-"+(date.getMonth() + 1).toString().padStart(2,'0')+"-"+date.getDate();
+		console.log(url)
+		window.location = url;
+	}
+
 	function recordOperationTime(){
 		strSec = Math.floor(Date.now() / 1000)
 		localStorage.setItem("operationTime", strSec)
@@ -182,6 +193,8 @@
 <div id="btnlist" style="display: none;text-align:center" title="" >
 	</br></br></br></br>
 	<input type="button" value="Vod" class="button button1" onclick = "showVOD();" />
+	&nbsp;&nbsp;
+	<input type="button" value="Location" class="button button1" onclick = "showLocation();" />
 	</br></br>
 	<input type="button" value="Log" class="button button1" onclick = "showlog();" />
 	&nbsp;&nbsp;

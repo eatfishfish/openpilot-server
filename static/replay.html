@@ -1,0 +1,269 @@
+<!doctype html>
+<html>
+    <head><meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+        <title>Route replay</title>
+        <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+        <style>
+        html, 
+        body, 
+        #container {
+            height: 100%;width: 100%;font-family: "微软雅黑";
+            }
+            .input-card .btn {margin-right: 1.2rem;width: 9rem;}
+            .input-card .btn:last-child {margin-right: 0;}
+            .amap-marker-label{border: 0;background-color: transparent;}
+            .amap-marker-content img {width: 25px;height: 34px;}
+            .info {position: relative;top: 0;right: 0;min-width: 0;font-size: 16px;border: 1px solid rgb(204, 204, 204);}
+            </style></head><body>
+            
+            
+            <div id="container"></div>
+            <div class="input-card">
+                <div class="input-item">
+                    <input type="date"  style="direction: rtl"  onchange="onDataChange()" id="myTime"/>
+                </div>
+                <div class="input-item">
+                    <input type="button" class="btn" value="开始动画" id="start" onclick="startAnimation()"/>
+                    <input type="button" class="btn" value="暂停动画" id="pause" onclick="pauseAnimation()"/>
+                </div>
+                <!--<div class="input-item">
+                    <input type="button" class="btn" value="继续动画" id="resume" onclick="resumeAnimation()"/>
+                    <input type="button" class="btn" value="停止动画" id="stop" onclick="stopAnimation()"/>
+                </div>-->
+                <div class="input-item">
+                    <input type="button" class="btn" value="显示时间" id="showDate" onclick="showDate()"/>
+                    <input type="button" class="btn" value="隐藏时间" id="hideDate" onclick="hideDate()"/>
+                </div>
+            </div>
+                        
+            <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=6a5cbc4029bcee01691fab072982280f&plugin=AMap.Driving"></script>
+
+            <script>
+                document.getElementById("myTime").value= '_DATE_';
+                
+                function onDataChange() {
+                    var oTimer = document.getElementById("myTime");
+                    var value = oTimer.value;
+                    dongleid = localStorage.getItem("dongleId");
+                    window.location= "/replaygps/"+dongleid+"/"+value;
+                }
+            </script>
+            <script>
+                //只要起点 和 终点的 经纬度信息
+                var allData = '_GPS_DATA_';
+                var lineArr;
+                var polyline;
+                var passedPolyline;
+                //全部的点
+                var path = [];
+                //是否显示时间
+                var showStatus = true;
+                //途经点
+                var wayMarker;
+                //初始化中心坐标
+                var centerGPS = _GPS_CENTER_;//['120.21473911773758', '30.263519892563018'];
+                //途经点数组。方便清空数据
+                var wayMarkerArray = new Array();
+                var carStart, carEnd;
+                //创建地图。中心点、缩放等级
+                var map = new AMap.Map("container", {
+                    resizeEnable: true,
+                    center: [centerGPS[0], centerGPS[1]],
+                    zoom: 17
+                });
+                //驾车策略基础信息
+                var drivingOption = {
+                    policy: AMap.DrivingPolicy.LEAST_DISTANCE,
+                    ferry: 1,
+                }
+                var gpsData = JSON.parse(allData)
+                var rowLength = gpsData.data.rows.length;
+                var gpsLength = gpsData.data.rows[rowLength - 1].gpsInfos.length;
+                //添加小汽车
+                carStart = [gpsData.data.rows[0].gpsInfos[0].longitude, gpsData.data.rows[0].gpsInfos[0].latitude]
+                carEnd = [gpsData.data.rows[rowLength - 1].gpsInfos[gpsLength - 1].longitude, gpsData.data.rows[rowLength - 1].gpsInfos[gpsLength - 1].latitude]
+                addCar('');
+             
+                for (var i = 0; i < rowLength; i++) {
+                    getRoute(i);
+                }
+
+                function getRoute(i) {
+                    var data = gpsData.data.rows[i];
+                    addMarker(i);
+                    pts = getWayPoints(data.gpsInfos);
+                    drawTrack(pts);
+                    drawPassedPolyLine();
+                    lineArr = pts;
+                    return
+                }
+             
+                function getWayPoints(coords) {
+                    var GPS = new Array();
+                    if (coords.length > 1) {
+                        //不要第一个和最后一个，会导致起点终点图标被覆盖
+                        for (var i = 1; i < coords.length - 1; i++) {
+                            var wayPoint = coords[i];
+                            var wayPointGPS = new AMap.LngLat(wayPoint.longitude, wayPoint.latitude)
+                            GPS.push(wayPointGPS);
+                        }
+                    }
+                    return GPS;
+                }
+             
+                // 绘制轨迹
+                function drawTrack(path) {                   
+                    color = "#"+parseInt(Math.random()*65536).toString(16)+ "5b"
+                    polyline = new AMap.Polyline({
+                        map: map,
+                        path: path,
+                        showDir: true,
+                        strokeColor: color,//"#18a45b",  //线颜色
+                        strokeWeight: 6,      //线宽
+                    });
+                }
+             
+                // 绘制运动轨迹样式
+                function drawPassedPolyLine() {
+                    passedPolyline = new AMap.Polyline({
+                        map: map,
+                        strokeColor: "#AF5",  //线颜色
+                        strokeWeight: 6,      //线宽
+                    });
+                }
+             
+                /*
+                 增加轨迹回放的小汽车和车牌
+                 @param plate - 车牌
+                */
+                function addCar(plate) {
+                    if (plate == "")
+                    {
+                        marker = new AMap.Marker({
+                            map: map,
+                            zIndex: 9999,
+                            position: [carStart[0], carStart[1]],
+                            icon: "https://lbsyun.baidu.com/jsdemo/img/car.png",
+                            offset: new AMap.Pixel(-26, -13),
+                            autoRotation: true,
+                        });
+                    }
+                    else 
+                    {
+                        marker = new AMap.Marker({
+                            map: map,
+                            zIndex: 9999,
+                            position: [carStart[0], carStart[1]],
+                            icon: "https://lbsyun.baidu.com/jsdemo/img/car.png",
+                            offset: new AMap.Pixel(-26, -13),
+                            autoRotation: true,
+                            label: {
+                                content: "<div class='info'>" + plate + "</div>",
+                                offset: new AMap.Pixel(-26, -35),
+                                autoRotation: true
+                            }
+                        });
+                    }
+                }
+             
+                // 显示时间
+                function showDate() {
+                    showStatus = true;
+                    for (var i = 0; i < rowLength; i++) {
+                        addMarker(i);
+                    }
+                }
+             
+                // 隐藏时间
+                function hideDate() {
+                    showStatus = false;
+                    for (var i = 0; i < rowLength; i++) {
+                        addMarker(i);
+                    }
+                }
+             
+                // 实例化点标记
+                function addMarker(i) {
+                    if (null != wayMarker) {
+                        wayMarkerArray.forEach(function (wayMarkerPoint) {
+                            wayMarkerPoint.setMap(null);
+                        })
+                        wayMarkerArray = new Array();
+                    }
+
+                    var data = gpsData.data.rows[i];
+                    for (var j = 0; j < data.gpsInfos.length; j++) {
+                        var gpsInfo = data.gpsInfos[j];
+                        wayMarker = new AMap.Marker({
+                            map: map,
+                            position: [gpsInfo.longitude, gpsInfo.latitude],
+                            offset: new AMap.Pixel(-13, -30)
+                        });
+
+                        if (showStatus) {
+                            wayMarker.setLabel({
+                                offset: new AMap.Pixel(20, 20),  //设置文本标注偏移量
+                                content: "<div class='info'>" + gpsInfo.create_time + "</div>", //设置文本标注内容
+                                direction: 'right' //设置文本标注方位
+                            });
+                        }
+                        wayMarkerArray.push(wayMarker);
+                    }
+                }
+             
+                /**********起点ICON**********/
+                var startMarker = new AMap.Marker({
+                    position: carStart,
+                    icon: 'https://webapi.amap.com/theme/v1.3/markers/n/start.png',
+                    map: map
+                })
+                /**********终点ICON**********/
+                var endMarker = new AMap.Marker({
+                    position: carEnd,
+                    icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
+                    map: map
+                })
+             
+                // 调整视野达到最佳显示区域
+                map.setFitView([startMarker, endMarker])
+             
+                marker.on('moving', function (e) {
+                    passedPolyline.setPath(e.passedPath);
+                });
+             
+                /**********动画 START**********/
+                function startAnimation() {
+                    marker.moveAlong(lineArr, 99200);
+                }
+             
+                function pauseAnimation() {
+                    marker.pauseMove();
+                }
+             
+                function resumeAnimation() {
+                    marker.resumeMove();
+                }
+             
+                function stopAnimation() {
+                    marker.stopMove();
+                }
+             
+                /**********动画 END**********/
+             
+                // 解析DrivingRoute对象，构造成AMap.Polyline的path参数需要的格式
+                function parseRouteToPath(route, type) {
+                    for (var i = 0, l = route.steps.length; i < l; i++) {
+                        var step = route.steps[i]
+             
+                        for (var j = 0, n = step.path.length; j < n; j++) {
+                            path.push(step.path[j])
+                        }
+                    }
+                    return path
+                }
+            </script>
+    </body>
+
+</html>
