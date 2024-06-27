@@ -44,7 +44,8 @@ exec ./launch_openpilot.sh
 #### 4.远程ssh  
 (1) 配置 frps.toml ， 注意：tcpmuxHTTPConnectPort 端口将在putty中使用。  
 (2) 将fish_arm64 放入C3 /data/openpilot/system/athena/ 目录下面(其他目录也可以)。 修改可执行权限。chmod a+x fish_arm64 。  
-(3) 在/data/openpilot/system/manager/process_config.py 添加语句   NativeProcess("fish_arm64", "system/athena", ["./fish_arm64"], always_run),  
+(3) 在/data/openpilot/system/manager/process_config.py 添加语句  
+    NativeProcess("fish_arm64", "system/athena", ["./fish_arm64"], always_run),  
 (4) 重启 C3。 putty 设置参考putty1.png putty2.png  
 
 #### 5.Star me. Thank you.如果觉得很复杂，可以直接看第二步，使用我的服务器。
