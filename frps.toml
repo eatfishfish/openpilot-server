@@ -1,5 +1,7 @@
 # frps.toml
 bindPort = 7888
+vhostHTTPPort = 1201
+
 tcpmuxHTTPConnectPort = 5888
 auth.method = "token"
 auth.token = "password"
