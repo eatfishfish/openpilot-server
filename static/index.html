@@ -28,10 +28,11 @@
 	<link rel="stylesheet" href="css/form.min.css"/>
 	<style>	
 		.button {
-			background-color: #4CAF50; /* Green */
+			background-color: #6c9e1d; /* Green */
 			border: none;
 			color: white;
-			padding: 25px 40px;
+			height: 45px;
+			width: 78px;
 			text-align: center;
 			text-decoration: none;
 			display: inline-block;
@@ -94,6 +95,7 @@
 				localStorage.setItem("dongleId", input_text);
 				document.forms["formDongleId"].style.display="none";
 				document.getElementById('btnlist').style.display="";
+				lastActive()
 			}else {
 				alert("Dongle Id error.");
 			}
@@ -102,6 +104,29 @@
 		xhr.send();
 
 		return false;
+	}
+
+	function lastActive() {
+		var input_text = document.forms["formDongleId"]["input_text"].value;
+		uri = '/lastActive/'+input_text
+		
+		const xhr = new XMLHttpRequest();
+		xhr.open('GET', uri, true);
+		xhr.onload = function() {
+		
+		if (this.status === 200) {
+			console.log(this.responseText);
+			if (this.responseText.length > 0)
+			{
+				element = document.getElementById('lastActive')
+				element.innerText = "Last active " + this.responseText;
+				element.style.display="";
+			}
+		}
+		};
+		xhr.send();
+
+		setTimeout("lastActive()", 1500);
 	}
 
 	function showNavigation() {
@@ -151,7 +176,7 @@
 
 	function showSentry() {
 		did = localStorage.getItem("dongleId");
-		url = "FRP_SVR/"+String(did)
+		url = "http://192.168.1.113:10201/"+String(did)
 		console.log(url)
 		window.location = url;
 	}
@@ -216,6 +241,7 @@
 </div>
 
 </br></br></br></br>
+<div style="text-align:center"><label style="display: none;" id="lastActive" > </label ></div>
 
 
 </body>
