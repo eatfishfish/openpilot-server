@@ -176,7 +176,7 @@
 
 	function showSentry() {
 		did = localStorage.getItem("dongleId");
-		url = "http://192.168.1.113:10201/"+String(did)
+		url = "FRP_SVR/"+String(did)
 		console.log(url)
 		window.location = url;
 	}
