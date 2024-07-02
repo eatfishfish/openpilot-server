@@ -95,7 +95,6 @@
 				localStorage.setItem("dongleId", input_text);
 				document.forms["formDongleId"].style.display="none";
 				document.getElementById('btnlist').style.display="";
-				lastActive()
 			}else {
 				alert("Dongle Id error.");
 			}
@@ -128,6 +127,7 @@
 
 		setTimeout("lastActive()", 1500);
 	}
+	lastActive();
 
 	function showNavigation() {
 		dongleId = localStorage.getItem("dongleId");
