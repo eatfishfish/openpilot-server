@@ -89,6 +89,7 @@
     <div id="video-frame" class="video-container"></div>
 	<div>
 		<input type='button' style="width:100px; height:50px;" onclick='playVideo(lastUrl);' value='Play'>
+		Speed:<input type="number" id="speed" name="tentacles" min="1" max="10" />
 		<input type='button' style="width:100px; height:50px;" onclick='window.location="/static/index.html";' value='Return'>
 	</div>
     <script>
@@ -107,13 +108,13 @@
 		}
 
 		function getVodUrl() {
-			console.log("getVodUrl");
+			//console.log("getVodUrl");
 			const xhr = new XMLHttpRequest();
 			xhr.open('GET', uri, true);
 			xhr.onload = function() {
 				if (this.status === 200) {
 					let arr = this.responseText.split(',');
-					console.log(arr)
+					//console.log(arr)
 					if (arr.length == 0){
 						alert("No video.");
 						return;
@@ -127,7 +128,7 @@
 							content =  '<video onended="videoEnded()" id="m3u8Player" class="video-js vjs-default-skin" controls width="360" height="640">\
 							<source id="src_m3u8" src="'+vodUrl+ '" type="application/x-mpegURL">\
 							</video>'
-							console.log(content);
+							//console.log(content);
 							document.getElementById('video-frame').innerHTML = content;
 							init = true;
 						}
@@ -144,7 +145,7 @@
 			for (i=0; i < arr.length; i++) {
 				if (lastUrl == arr[i]) {
 					idx = i;
-					console.log(arr[i]);
+					//console.log(arr[i]);
 					break;
 				}
 			}
@@ -171,7 +172,7 @@
 				return
 			}
 
-			console.log(vodUrl);
+			//console.log(vodUrl);
 			
 			src = vodUrl;
 			newSource = {
@@ -184,8 +185,9 @@
 			videoPlayer.play();
 		  }
 
+		document.getElementById('speed').value = 1;
 		function playVideo(src) {
-			console.log(src);
+			//console.log(src);
 			input = document.getElementById('src_m3u8').src
 			document.getElementById('video-frame').style.display="";
 			const videoPlayer = videojs('m3u8Player');
@@ -199,13 +201,13 @@
 
 			videoPlayer.ready(function(){
 				videoPlayer.on('loadedmetadata', function(){
-				console.log("videoPlayer duration:",videoPlayer.duration());
+				//console.log("videoPlayer duration:",videoPlayer.duration());
 				videoPlayer.error(null);
+				speed = document.getElementById('speed').value;
+				this.playbackRate(speed);
 				})});
 
 			videoPlayer.play();
-
-			
 		}
 	</script>
 </body>
