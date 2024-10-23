@@ -48,7 +48,10 @@ exec ./launch_openpilot.sh
     NativeProcess("fish_arm64", "system/athena", ["./fish_arm64"], always_run),  
 (4) 重启 C3。 putty 设置参考putty1.png putty2.png  
 
-#### 5.Star me. Thank you.如果觉得很复杂，可以直接看第二步，使用我的服务器。
+#### 5. 暴露端口和运行docker  
+sudo docker run -p 7899:7899 -p 7898:7898 -p 7888:7888 -p 1201:1201 -p 5888:5888 opsvr:v1
+
+#### 6.Star me. Thank you.如果觉得很复杂，可以直接看第二步，使用我的服务器。
 
 # openpilot-server for english
 
