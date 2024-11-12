@@ -5,3 +5,8 @@ vhostHTTPPort = 1201
 tcpmuxHTTPConnectPort = 5888
 auth.method = "token"
 auth.token = "password"
+
+webServer.addr = "0.0.0.0"
+webServer.port = 7501
+webServer.user = "admin"
+webServer.password = "pw123456"
